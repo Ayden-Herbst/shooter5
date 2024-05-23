@@ -69,10 +69,10 @@
 
         function handleKeyDown(e) {
             if (e.key === 'ArrowLeft') {
-                player.x -= player.speed * 8;
+                player.x -= player.speed * 12;
                 player.x = Math.max(0, player.x);
             } else if (e.key === 'ArrowRight') {
-                player.x += player.speed * 8;
+                player.x += player.speed * 12;
                 player.x = Math.min(canvas.width - player.width, player.x);
             } else if (e.key === 'ArrowUp') {
                 shootBullet();
