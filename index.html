@@ -111,31 +111,33 @@
         }
 
         function drawEnemies() {
-            const image = new Image();
-            image.src = 'img/image.png';
-            ctx.drawImage(image, enemy.x, enemy.y, enemy.width, enemy.height);
+            const enemyImage = new Image();
+            enemyImage.src = 'img/image.png';
+
+            ctx.fillStyle = '#ff0';
             enemies.forEach((enemy, index) => {
-                enemy.y += enemy.speed;
-                if (enemy.isPSS) {
-                    ctx.fillStyle = '#f00';
-                    ctx.fillText(targetPSS.acronym, enemy.x, enemy.y);
-                } else {
-                    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-                }
+            enemy.y += enemy.speed;
+            if (enemy.isPSS) {
+                ctx.fillStyle = '#f00';
+                ctx.fillText(targetPSS.acronym, enemy.x, enemy.y);
+            } else {
+                ctx.drawImage(enemyImage, enemy.x, enemy.y, enemy.width, enemy.height);
+            }
 
-                // Remove enemy if it goes off-screen
-                if (enemy.y > canvas.height) {
-                    enemies.splice(index, 1);
-                }
+            // Remove enemy if it goes off-screen
+            if (enemy.y > canvas.height) {
+                enemies.splice(index, 1);
+            }
 
-                // Check for collision with player
-                if (!enemy.isPSS && enemy.x < player.x + player.width &&
-                    enemy.x + enemy.width > player.x &&
-                    enemy.y < player.y + player.height &&
-                    enemy.y + enemy.height > player.y) {
-                    endGame();
-                }
+            // Check for collision with player
+            if (!enemy.isPSS && enemy.x < player.x + player.width &&
+                enemy.x + enemy.width > player.x &&
+                enemy.y < player.y + player.height &&
+                enemy.y + enemy.height > player.y) {
+                endGame();
+            }
             });
+        }
         }
 
         function generateEnemies() {
