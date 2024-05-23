@@ -26,6 +26,14 @@
 <body>
     <canvas id="gameCanvas"></canvas>
     <button id="restartButton">Restart</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.1/howler.min.js"></script>
+    <script>
+        var sound = new Howl({
+          src: ['audio.mp3'],
+          volume: 1,
+        });
+        sound.play()
+    </script>
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
