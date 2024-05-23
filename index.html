@@ -40,6 +40,8 @@
 
         // Target variables
         const targetPSS = { acronym: "PSS", x: 100, y: 50, width: 30, height: 30 };
+        const enemyImage = new Image();
+        enemyImage.src = 'img/image.png'; // Path to the enemy image
 
         // Touch controls
         let touchX = null;
@@ -118,7 +120,7 @@
                     ctx.fillStyle = '#f00';
                     ctx.fillText(targetPSS.acronym, enemy.x, enemy.y);
                 } else {
-                    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                    ctx.drawImage(enemyImage, enemy.x, enemy.y, enemy.width, enemy.height);
                 }
 
                 // Remove enemy if it goes off-screen
