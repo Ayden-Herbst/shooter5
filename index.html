@@ -113,8 +113,7 @@
         function drawEnemies() {
             const enemyImage = new Image();
             enemyImage.src = 'img/image.png';
-
-            ctx.fillStyle = '#ff0';
+            
             enemies.forEach((enemy, index) => {
             enemy.y += enemy.speed;
             if (enemy.isPSS) {
