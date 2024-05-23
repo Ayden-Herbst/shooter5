@@ -41,7 +41,7 @@
         // Target variables
         const targetPSS = { acronym: "PSS", x: 100, y: 50, width: 30, height: 30 };
         const enemyImage = new Image();
-        enemyImage.src = 'img/image.png'; // Path to the enemy image
+        enemyImage.src = 'img/jacobs.png'; // Path to the enemy image
 
         // Touch controls
         let touchX = null;
@@ -145,7 +145,7 @@
                 if (isPSS) {
                     enemies.push({ x: randomX, y: -30, isPSS: true, speed: 3, width: targetPSS.width, height: targetPSS.height });
                 } else {
-                    enemies.push({ x: randomX, y: -30, width: 100, height: 100, speed: 3 });
+                    enemies.push({ x: randomX, y: -30, width: 60, height: 60, speed: 3 });
                 }
             }
         }
