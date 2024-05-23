@@ -43,12 +43,7 @@
         let enemyImage = new Image();
         enemyImage.src = ''; // Path to the enemy image
 
-        // Touch controls
-        let touchX = null;
-
-        // Initialize game
-        function init() {
-            function getRandomInt(min, max) {
+        function getRandomInt(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             }
             
@@ -62,11 +57,16 @@
                 case 3:
                     enemyImage.src = "moolman.png"
                     break;
-
+                    
                 default:
-                    break;
+                    console.log("You are retard");
             }
 
+        // Touch controls
+        let touchX = null;
+
+        // Initialize game
+        function init() {
             player = { x: canvas.width / 2 - 15, y: canvas.height - 60, width: 30, height: 30, speed: 5 };
             bullets = [];
             enemies = [];
@@ -215,25 +215,6 @@
                 const diff = touchX - player.x - player.width / 2;
                 player.x += diff * 0.1; // Smooth movement
                 player.x = Math.max(0, Math.min(canvas.width - player.width, player.x)); // Keep player within canvas
-            }
-
-            function getRandomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-            
-            switch (getRandomInt(1, 3)) {
-                case 1:
-                    enemyImage.src = "jacobs.png"
-                    break;
-                case 2: 
-                    enemyImage.src = "smith.png"
-                    break;
-                case 3:
-                    enemyImage.src = "moolman.png"
-                    break;
-                    
-                default:
-                    break;
             }
 
             requestAnimationFrame(updateGame);
