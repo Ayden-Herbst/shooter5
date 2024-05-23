@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shooting Game</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #000; }
+        canvas { background: #000; display: block; }
+        #restartButton {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background: #f00;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <button id="restartButton">Restart</button>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const restartButton = document.getElementById('restartButton');
+
+        // Responsive canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Game variables
+        let player, bullets, enemies, score, highScore, gameOver;
+
+        // Target variables
+        const targetPSS = { acronym: "PSS", x: 100, y: 50, width: 30, height: 30 };
+
+        // Touch controls
+        let touchX = null;
+
+        // Initialize game
+        function init() {
+            player = { x: canvas.width / 2 - 15, y: canvas.height - 60, width: 30, height: 30, speed: 5 };
+            bullets = [];
+            enemies = [];
+            score = 0;
+            highScore = localStorage.getItem('highScore') || 0;
+            gameOver = false;
+            touchX = null;
+            restartButton.style.display = 'none';
+
+            canvas.addEventListener('touchstart', handleTouchStart);
+            canvas.addEventListener('touchmove', handleTouchMove);
+            canvas.addEventListener('touchend', handleTouchEnd);
+
+            updateGame();
+        }
+        document.addEventListener('keydown', handleKeyDown);
+
+        function handleKeyDown(e) {
+            if (e.key === 'ArrowLeft') {
+                player.x -= player.speed * 6;
+                player.x = Math.max(0, player.x);
+            } else if (e.key === 'ArrowRight') {
+                player.x += player.speed * 6;
+                player.x = Math.min(canvas.width - player.width, player.x);
+            } else if (e.key === 'ArrowUp') {
+                shootBullet();
+            }
+        }
+        
+        function handleTouchStart(e) {
+            touchX = e.touches[0].clientX;
+            shootBullet();
+        }
+
+        function handleTouchMove(e) {
+            touchX = e.touches[0].clientX;
+        }
+
+        function handleTouchEnd() {
+            touchX = null;
+        }
+
+        function shootBullet() {
+            bullets.push({ x: player.x + player.width / 2 - 2.5, y: player.y, width: 5, height: 10, speed: 7 });
+        }
+
+        function drawPlayer() {
+            ctx.fillStyle = '#00f';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        function drawBullets() {
+            ctx.fillStyle = '#f00';
+            bullets.forEach((bullet, index) => {
+                bullet.y -= bullet.speed;
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+
+                // Remove bullet if it goes off-screen
+                if (bullet.y + bullet.height < 0) {
+                    bullets.splice(index, 1);
+                }
+            });
+        }
+
+        function drawEnemies() {
+            ctx.fillStyle = '#ff0';
+            enemies.forEach((enemy, index) => {
+                enemy.y += enemy.speed;
+                if (enemy.isPSS) {
+                    ctx.fillStyle = '#f00';
+                    ctx.fillText(targetPSS.acronym, enemy.x, enemy.y);
+                } else {
+                    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                }
+
+                // Remove enemy if it goes off-screen
+                if (enemy.y > canvas.height) {
+                    enemies.splice(index, 1);
+                }
+
+                // Check for collision with player
+                if (!enemy.isPSS && enemy.x < player.x + player.width &&
+                    enemy.x + enemy.width > player.x &&
+                    enemy.y < player.y + player.height &&
+                    enemy.y + enemy.height > player.y) {
+                    endGame();
+                }
+            });
+        }
+
+        function generateEnemies() {
+            if (Math.random() < 0.02) {
+                const isPSS = Math.random() < 0.1; // 10% chance of generating a PSS target
+                const randomX = Math.random() * (canvas.width - 30);
+                if (isPSS) {
+                    enemies.push({ x: randomX, y: -30, isPSS: true, speed: 3, width: targetPSS.width, height: targetPSS.height });
+                } else {
+                    enemies.push({ x: randomX, y: -30, width: 30, height: 30, speed: 3 });
+                }
+            }
+        }
+
+        function detectCollisions() {
+            bullets.forEach((bullet, bIndex) => {
+                enemies.forEach((enemy, eIndex) => {
+                    if (!enemy.isPSS && bullet.x < enemy.x + enemy.width &&
+                        bullet.x + bullet.width > enemy.x &&
+                        bullet.y < enemy.y + enemy.height &&
+                        bullet.y + bullet.height > enemy.y) {
+                        bullets.splice(bIndex, 1);
+                        enemies.splice(eIndex, 1);
+                        score++;
+                    } else if (enemy.isPSS && bullet.x < enemy.x + enemy.width &&
+                        bullet.x + bullet.width > enemy.x &&
+                        bullet.y < enemy.y + enemy.height &&
+                        bullet.y + bullet.height > enemy.y) {
+                        bullets.splice(bIndex, 1);
+                        enemies.splice(eIndex, 1);
+                        score += 5;
+                    }
+                });
+            });
+        }
+
+        function drawScore() {
+            ctx.fillStyle = '#fff';
+            ctx.font = '16px Arial';
+            ctx.fillText('Score: ' + score, 8, 20);
+            ctx.fillText('High Score: ' + highScore, 8, 40);
+        }
+
+        function updateGame() {
+            if (gameOver) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawPlayer();
+            drawBullets();
+            drawEnemies();
+            generateEnemies();
+            detectCollisions();
+            drawScore();
+
+            // Move player based on touch position
+            if (touchX !== null) {
+                const diff = touchX - player.x - player.width / 2;
+                player.x += diff * 0.1; // Smooth movement
+                player.x = Math.max(0, Math.min(canvas.width - player.width, player.x)); // Keep player within canvas
+            }
+
+            requestAnimationFrame(updateGame);
+        }
+
+        function endGame() {
+            gameOver = true;
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('highScore', highScore);
+            }
+            restartButton.style.display = 'block';
+        }
+
+        restartButton.addEventListener('click', init);
+
+        init();
+    </script>
+</body>
+</html>
