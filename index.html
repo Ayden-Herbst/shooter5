@@ -97,8 +97,10 @@
         }
 
         function drawPlayer() {
-            ctx.fillStyle = '#00f';
-            ctx.fillRect(player.x, player.y, player.width, player.height);
+            cx.fillStyle = '#00ff00';
+            let playerImage = new Image();
+            playerImage.src = 'img/james.png';
+            ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
         }
 
         function drawBullets() {
