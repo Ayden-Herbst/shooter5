@@ -43,7 +43,6 @@
         let enemyImage = new Image();
         enemyImage.src = ''; // Path to the enemy image
 
-        
 
         // Touch controls
         let touchX = null;
@@ -103,8 +102,31 @@
             ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
         }
 
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+
         function drawBullets() {
-            ctx.fillStyle = '#f00';
+            switch (getRandomInt(1, 4)) {
+                case 1:
+                    ctx.fillStyle = '#f00';
+                    break;
+                case 2:
+                    ctx.fillStyle = '#0f0';
+                    break;
+                case 3:
+                    ctx.fillStyle = '#00f';
+                    break;
+                case 4:
+                    ctx.fillStyle = '#ff0';
+                    break;
+                default:
+                    ctx.fillStyle = '#fff';
+                    break;
+            }
             bullets.forEach((bullet, index) => {
                 bullet.y -= bullet.speed;
                 ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
@@ -202,9 +224,9 @@
                 player.x = Math.max(0, Math.min(canvas.width - player.width, player.x)); // Keep player within canvas
             }
 
-            if (score >= 50) {
+            if (score >= 120) {
                 enemyImage.src = 'img/jacobs.png';
-            } else if (score >= 30) {
+            } else if (score >= 60) {
                 enemyImage.src = 'img/smith.png';
             } else {
                 enemyImage.src = 'img/moolman.png';
